@@ -156,6 +156,9 @@ main{min-width:0;display:flex;flex-direction:column;gap:20px}
 .upload[data-src="CALIDAD"].is-drag{border-color:#6D4BC4;background:color-mix(in srgb,#6D4BC4 12%,transparent)}
 .btn-cal{background:#6D4BC4;border-color:#6D4BC4;color:#fff}
 .btn-cal:hover{background:#5B3CAD}
+.persist{margin-top:12px;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.persist .check input{accent-color:var(--green)}
+.persist-info{font-size:12px;color:var(--ink-2);margin:0}
 .tip-tools{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .tip-tools .seg{display:inline-grid;grid-template-columns:repeat(3,auto)}
 .tip-tools .seg.two{grid-template-columns:repeat(2,auto)}
@@ -348,6 +351,11 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
           <details class="mapping" id="mapCALIDAD"><summary>Columnas detectadas</summary><div class="map-grid"></div></details>
         </div>
         <p class="muted" style="font-size:12px;margin:10px 0 0">También puedes arrastrar el archivo sobre cada recuadro.</p>
+        <div class="persist">
+          <label class="check"><input type="checkbox" id="rememberToggle" checked> Recordar bases en este navegador</label>
+          <p class="persist-info" id="persistInfo">Nada guardado todavía.</p>
+          <button class="btn" id="btnForget" style="justify-content:center"><svg><use href="#i-trash"/></svg>Borrar bases guardadas</button>
+        </div>
       </div>
     </section>
 
@@ -652,6 +660,7 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
             <li>Los valores de las fórmulas se leen tal como quedaron guardados en Excel.</li>
             <li>En la pestaña Scraping puedes ver solo lo entregado en el mismo mes de la gestión, lo de meses anteriores o todo (General).</li>
             <li>La presentación semanal toma la semana de lunes a domingo según la fecha de gestión y sale en el formato Asertis. Las metas y las novedades son opcionales.</li>
+            <li>"Recordar bases en este navegador" guarda los Excel cargados en este equipo y los vuelve a abrir solos. No se comparten con otros computadores ni personas. "Borrar bases guardadas" los elimina.</li>
             <li>Tipificaciones: una pestaña con el reparto general de Front y Scraping (y su comparación) y otra con la matriz agente × tipificación.</li>
             <li>Calidad: se lee la hoja de monitoreos (fecha, agente, campaña, nota, tipificación y hallazgo). La nota 0 cuenta como crítica.</li>
             <li>Las pestañas separan la vista: Consolidado (todo), Front y Scraping (sin remarcados), Remarcados (de cualquier base) y Por agente.</li>
@@ -831,11 +840,12 @@ function findHeaderRow(aoa){
   return best;
 }
 
-function readFile(src, file, sheetName){
+function readFile(src, file, sheetName, opts){
+  opts = opts || {};
   if (!/\.(xlsx|xls)$/i.test(file.name)){ toast('El archivo "' + file.name + '" no es un Excel (.xlsx o .xls).', 'err'); return; }
   loader(true, 'Leyendo ' + file.name + '…');
   var reader = new FileReader();
-  reader.onerror = function(){ loader(false); toast('No se pudo leer el archivo. Intenta cargarlo de nuevo.', 'err'); };
+  reader.onerror = function(){ loader(false); toast('No se pudo leer el archivo. Intenta cargarlo de nuevo.', 'err'); if (opts.done) opts.done(); };
   reader.onload = function(e){
     nextFrame().then(function(){
       try {
@@ -857,20 +867,26 @@ function readFile(src, file, sheetName){
             src: src, file: file, fileName: file.name, loadedAt: new Date(), sheetNames: names, sheet: sheet,
             headers: headers, rows: rows, map: detectColumns(headers, rows), recs: []
           };
+          applySavedMap(base, opts.map);
           buildRecords(base);
           state.bases[src] = base;
           renderUploadMeta(src);
           onDataChanged(true);
           loader(false);
-          var miss = ['fecha','agente','resultado'].filter(function(f){ return base.map[f] < 0; }).map(function(f){ return FIELD_LABELS[f]; });
-          if (miss.length) toast('Base ' + src + ': no encontré la columna de ' + miss.join(', ') + '. Elígela en "Columnas detectadas".', 'info');
-          else toast('Base ' + src + ' cargada: ' + fmtN.format(rows.length) + ' registros.');
+          if (!opts.restoring) persistBase(src, file, sheet, base.map);
+          if (!opts.restoring){
+            var miss = ['fecha','agente','resultado'].filter(function(f){ return base.map[f] < 0; }).map(function(f){ return FIELD_LABELS[f]; });
+            if (miss.length) toast('Base ' + src + ': no encontré la columna de ' + miss.join(', ') + '. Elígela en "Columnas detectadas".', 'info');
+            else toast('Base ' + src + ' cargada: ' + fmtN.format(rows.length) + ' registros.');
+          }
+          if (opts.done) opts.done(true);
         });
       } catch (err){
         loader(false);
         toast('No pude procesar el archivo: ' + (err && err.message ? err.message : 'formato no reconocido') + '.', 'err');
+        if (opts.done) opts.done();
       }
-    }).catch(function(err){ loader(false); toast('No pude procesar el archivo: ' + (err && err.message ? err.message : 'error desconocido') + '.', 'err'); });
+    }).catch(function(err){ loader(false); toast('No pude procesar el archivo: ' + (err && err.message ? err.message : 'error desconocido') + '.', 'err'); if (opts.done) opts.done(); });
   };
   reader.readAsArrayBuffer(file);
 }
@@ -1578,11 +1594,12 @@ function pickQualitySheet(names){
   for (var p = 0; p < pref.length; p++){ for (var i = 0; i < names.length; i++){ if (pref[p].test(names[i]) && !/cronograma|informe|control/i.test(names[i])) return names[i]; } }
   return names[0];
 }
-function readQualityFile(file, sheetName){
+function readQualityFile(file, sheetName, opts){
+  opts = opts || {};
   if (!/\.(xlsx|xls)$/i.test(file.name)){ toast('El archivo "' + file.name + '" no es un Excel (.xlsx o .xls).', 'err'); return; }
   loader(true, 'Leyendo ' + file.name + '…');
   var reader = new FileReader();
-  reader.onerror = function(){ loader(false); toast('No se pudo leer el archivo de calidad.', 'err'); };
+  reader.onerror = function(){ loader(false); toast('No se pudo leer el archivo de calidad.', 'err'); if (opts.done) opts.done(); };
   reader.onload = function(e){
     nextFrame().then(function(){
       try {
@@ -1596,17 +1613,22 @@ function readQualityFile(file, sheetName){
         var headers = (aoa[hr] || []).map(function(h, i){ return h == null || String(h).trim() === '' ? 'Columna ' + (i + 1) : String(h).trim(); });
         var rows = aoa.slice(hr + 1).filter(function(r){ return r.some(function(v){ return v != null && v !== ''; }); });
         var q = { file: file, fileName: file.name, loadedAt: new Date(), sheetNames: names, sheet: sheet, headers: headers, rows: rows, map: detectColumns(headers, rows, Q_RULES), recs: [] };
+        applySavedMap(q, opts.map);
         buildQualityRecords(q);
         state.q.base = q;
         renderQualityMeta();
         populateQualityFilters();
         loader(false);
         var miss = ['agente','nota'].filter(function(f){ return q.map[f] < 0; }).map(function(f){ return Q_LABELS[f]; });
-        if (miss.length) toast('Calidad: no encontré la columna de ' + miss.join(' y ') + '. Elígela en "Columnas detectadas".', 'info');
-        else toast('Base de calidad cargada: ' + fmtN.format(q.recs.length) + ' monitoreos.');
+        if (!opts.restoring){
+          if (miss.length) toast('Calidad: no encontré la columna de ' + miss.join(' y ') + '. Elígela en "Columnas detectadas".', 'info');
+          else toast('Base de calidad cargada: ' + fmtN.format(q.recs.length) + ' monitoreos.');
+        }
         onDataChanged(true);
         if (!state.bases.FRONT && !state.bases.SCRAPING) setView('CALIDAD');
-      } catch (err){ loader(false); toast('No pude procesar la base de calidad: ' + (err && err.message ? err.message : 'formato no reconocido') + '.', 'err'); }
+        if (!opts.restoring) persistBase('CALIDAD', file, sheet, q.map);
+        if (opts.done) opts.done(true);
+      } catch (err){ loader(false); toast('No pude procesar la base de calidad: ' + (err && err.message ? err.message : 'formato no reconocido') + '.', 'err'); if (opts.done) opts.done(); }
     });
   };
   reader.readAsArrayBuffer(file);
@@ -1900,6 +1922,86 @@ function exportTipAg(){
   saveFile('tipificaciones-por-agente-' + tipState.agBase.toLowerCase() + '-' + stamp() + '.xlsx', workbookBlob([['Cantidad', XLSX.utils.json_to_sheet(mk(false))], ['Porcentaje', XLSX.utils.json_to_sheet(mk(true))]]));
 }
 
+/* =========================================================
+   RECORDAR BASES EN ESTE NAVEGADOR (IndexedDB)
+   Se guarda el archivo Excel original, la hoja elegida y el mapeo de columnas.
+   Los datos quedan solo en este navegador: no se envían a ningún servidor.
+   ========================================================= */
+var IDB_NAME = 'habi-tablero', IDB_STORE = 'bases';
+function idbOpen(){
+  return new Promise(function(res, rej){
+    if (!window.indexedDB){ rej(new Error('Este navegador no permite guardar datos.')); return; }
+    var rq = indexedDB.open(IDB_NAME, 1);
+    rq.onupgradeneeded = function(){ rq.result.createObjectStore(IDB_STORE, { keyPath: 'src' }); };
+    rq.onsuccess = function(){ res(rq.result); };
+    rq.onerror = function(){ rej(rq.error); };
+  });
+}
+function idbTx(mode, fn){
+  return idbOpen().then(function(db){
+    return new Promise(function(res, rej){
+      var tx = db.transaction(IDB_STORE, mode), st = tx.objectStore(IDB_STORE), out;
+      var r = fn(st); if (r) r.onsuccess = function(){ out = r.result; };
+      tx.oncomplete = function(){ db.close(); res(out); };
+      tx.onerror = tx.onabort = function(){ db.close(); rej(tx.error); };
+    });
+  });
+}
+function rememberOn(){ var el = $('#rememberToggle'); return !!(el && el.checked); }
+/* Aplica el mapeo de columnas guardado si sigue siendo válido para el archivo */
+function applySavedMap(base, saved){
+  if (!saved) return;
+  Object.keys(saved).forEach(function(k){ if (k in base.map && saved[k] < base.headers.length) base.map[k] = saved[k]; });
+}
+function persistBase(src, file, sheet, map){
+  if (!rememberOn()) return;
+  file.arrayBuffer().then(function(buf){
+    return idbTx('readwrite', function(st){ return st.put({ src: src, name: file.name, lastModified: file.lastModified || Date.now(), buf: buf, sheet: sheet, map: map, savedAt: Date.now() }); });
+  }).then(renderPersistInfo).catch(function(){ toast('No se pudo guardar la base ' + src + ' en este navegador (puede faltar espacio o estar en modo incógnito).', 'info'); });
+}
+function persistMap(src, map){
+  if (!rememberOn()) return;
+  idbTx('readonly', function(st){ return st.get(src); }).then(function(rec){
+    if (!rec) return;
+    rec.map = map; rec.savedAt = Date.now();
+    return idbTx('readwrite', function(st){ return st.put(rec); });
+  }).then(renderPersistInfo).catch(function(){});
+}
+function forgetBase(src){ return idbTx('readwrite', function(st){ return st.delete(src); }).then(renderPersistInfo).catch(function(){}); }
+function forgetAll(){ return idbTx('readwrite', function(st){ return st.clear(); }).then(renderPersistInfo); }
+function renderPersistInfo(){
+  var el = $('#persistInfo');
+  if (!rememberOn()){ el.textContent = 'Desactivado: las bases se borran al cerrar o recargar la página.'; return Promise.resolve(); }
+  return idbTx('readonly', function(st){ return st.getAll(); }).then(function(list){
+    list = list || [];
+    if (!list.length){ el.textContent = 'Nada guardado todavía. Las bases que cargues se recordarán aquí.'; return; }
+    var last = Math.max.apply(null, list.map(function(x){ return x.savedAt; }));
+    var names = { FRONT: 'Front', SCRAPING: 'Scraping', CALIDAD: 'Calidad' };
+    el.textContent = 'Guardadas: ' + list.map(function(x){ return names[x.src] || x.src; }).join(', ') + ' · actualizado ' +
+      new Date(last).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' }) + ' · solo en este navegador';
+  }).catch(function(){ el.textContent = 'Este navegador no permite guardar las bases (por ejemplo, en modo incógnito).'; });
+}
+/* Al abrir: vuelve a cargar, una por una, las bases guardadas */
+function restoreBases(){
+  if (!rememberOn()){ renderPersistInfo(); return; }
+  idbTx('readonly', function(st){ return st.getAll(); }).then(function(list){
+    list = (list || []).sort(function(a, b){ return ['FRONT','SCRAPING','CALIDAD'].indexOf(a.src) - ['FRONT','SCRAPING','CALIDAD'].indexOf(b.src); });
+    renderPersistInfo();
+    if (!list.length) return;
+    var ok = 0, i = 0;
+    (function next(){
+      if (i >= list.length){
+        if (ok) toast('Se recuperaron ' + ok + (ok === 1 ? ' base guardada' : ' bases guardadas') + ' en este navegador.');
+        return;
+      }
+      var rec = list[i++], file = new File([rec.buf], rec.name, { lastModified: rec.lastModified });
+      var done = function(success){ if (success) ok++; next(); };
+      if (rec.src === 'CALIDAD') readQualityFile(file, rec.sheet, { map: rec.map, restoring: true, done: done });
+      else readFile(rec.src, file, rec.sheet, { map: rec.map, restoring: true, done: done });
+    })();
+  }).catch(function(){ renderPersistInfo(); });
+}
+
 /* ---------- Orquestación ---------- */
 function onDataChanged(repopulate){
   var has = !!(state.bases.FRONT || state.bases.SCRAPING || state.q.base);
@@ -2059,6 +2161,7 @@ function bind(){
     var src = b.dataset.clear;
     if (src === 'CALIDAD'){ state.q.base = null; renderQualityMeta(); }
     else { state.bases[src] = null; renderUploadMeta(src); }
+    forgetBase(src);
     onDataChanged(true);
     toast('Base ' + src + ' retirada del tablero.', 'info');
   }); });
@@ -2085,12 +2188,12 @@ function bind(){
     if (t.matches('select[data-map]')){
       var b = state.bases[t.dataset.src]; b.map[t.dataset.map] = +t.value;
       loader(true, 'Recalculando…');
-      nextFrame().then(function(){ buildRecords(b); onDataChanged(true); loader(false); });
+      nextFrame().then(function(){ buildRecords(b); onDataChanged(true); loader(false); persistMap(b.src, b.map); });
     } else if (t.matches('select[data-sheet]')){
       var src = t.dataset.sheet; readFile(src, state.bases[src].file, t.value);
     } else if (t.matches('select[data-qmap]')){
       var q = state.q.base; q.map[t.dataset.qmap] = +t.value;
-      buildQualityRecords(q); renderQualityMeta(); populateQualityFilters(); onDataChanged(true);
+      buildQualityRecords(q); renderQualityMeta(); populateQualityFilters(); onDataChanged(true); persistMap('CALIDAD', q.map);
     } else if (t.matches('select[data-qsheet]')){
       readQualityFile(state.q.base.file, t.value);
     }
@@ -2105,6 +2208,25 @@ function bind(){
     $$('#scrScope button').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
     state.scrScope = b.dataset.v; refresh();
   }); });
+  /* Recordar bases */
+  try { if (localStorage.getItem('habi-remember') === '0') $('#rememberToggle').checked = false; } catch (e){}
+  $('#rememberToggle').addEventListener('change', function(){
+    var on = this.checked;
+    try { localStorage.setItem('habi-remember', on ? '1' : '0'); } catch (e){}
+    if (on){
+      /* Guarda lo que ya está cargado */
+      ['FRONT','SCRAPING'].forEach(function(s){ var b = state.bases[s]; if (b) persistBase(s, b.file, b.sheet, b.map); });
+      if (state.q.base) persistBase('CALIDAD', state.q.base.file, state.q.base.sheet, state.q.base.map);
+      renderPersistInfo();
+      toast('Las bases se recordarán en este navegador.');
+    } else {
+      forgetAll().then(function(){ toast('Listo: se borraron las bases guardadas y ya no se recordarán.', 'info'); }).catch(function(){});
+    }
+  });
+  $('#btnForget').addEventListener('click', function(){
+    forgetAll().then(function(){ toast('Se borraron las bases guardadas en este navegador. Las que tienes abiertas siguen visibles hasta que recargues.', 'info'); })
+      .catch(function(){ toast('No se pudo borrar lo guardado en este navegador.', 'err'); });
+  });
   /* Tipificaciones */
   $$('.tipRem').forEach(function(cb){ cb.addEventListener('change', function(){ tipState.rem = cb.checked; $$('.tipRem').forEach(function(x){ x.checked = cb.checked; }); refresh(); }); });
   $$('#tipAgBase button').forEach(function(b){ b.addEventListener('click', function(){
@@ -2165,7 +2287,8 @@ initTheme();
 if (typeof XLSX === 'undefined' || typeof Chart === 'undefined'){
   document.addEventListener('DOMContentLoaded', function(){ toast('No se pudieron cargar las librerías. Revisa tu conexión a internet y recarga la página.', 'err'); });
 }
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind); else bind();
+function start(){ bind(); if (typeof XLSX !== 'undefined') restoreBases(); else renderPersistInfo(); }
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();
 </script>
 </body>
