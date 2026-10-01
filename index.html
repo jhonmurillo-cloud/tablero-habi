@@ -260,6 +260,87 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
 .toast.err{border-left-color:var(--red)}
 .toast.info{border-left-color:var(--orange)}
 
+
+/* ---------- Agentes activos ---------- */
+.act-list{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);margin:8px 0 10px}
+.act-list.dim{opacity:.55}
+.act-row{display:flex;align-items:center;gap:8px;padding:6px 10px;font-size:12.5px;cursor:pointer;border-bottom:1px solid var(--line)}
+.act-row:last-child{border-bottom:0}
+.act-row input{accent-color:var(--green);width:15px;height:15px;flex:none;margin:0}
+.act-row .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.act-row.off .nm{color:var(--ink-2);text-decoration:line-through}
+.act-row .cnt{font-size:11.5px}
+.act-help{font-size:12px;color:var(--ink-2);margin:0 0 10px}
+
+/* ---------- Presentar indicadores ---------- */
+.pres-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pres-tools .seg{display:inline-grid;grid-template-columns:repeat(4,auto)}
+.pres-tools .seg button{padding:6px 12px}
+.pres-tools .grow{flex:1}
+#presWrap{position:relative}
+.pres-stage{position:relative;width:100%;aspect-ratio:16/9;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;container-type:inline-size;box-shadow:var(--shadow)}
+.pres-stage::before{content:"";position:absolute;left:0;right:0;top:0;height:max(4px,.55cqw);background:linear-gradient(90deg,var(--orange) 0 62%,var(--green) 62% 100%);z-index:1}
+.pres-slide{position:absolute;inset:0;padding:4.4cqw 5cqw 6cqw;display:flex;flex-direction:column;gap:2cqw}
+.ps-head{display:flex;flex-direction:column;gap:.5cqw}
+.ps-title{margin:0;font-size:max(18px,3.3cqw);font-weight:800;letter-spacing:-.02em;line-height:1.05}
+.ps-sub{margin:0;font-size:max(11px,1.45cqw);color:var(--ink-2);font-weight:600}
+.ps-grid{display:grid;gap:1.6cqw;flex:1;min-height:0}
+.ps-grid.g1{grid-template-columns:minmax(0,1fr)}
+.ps-grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ps-grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ps-grid.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.ps-tile{background:var(--surface-2);border:1px solid var(--line);border-radius:1.1cqw;padding:2cqw 2.2cqw;display:flex;flex-direction:column;justify-content:space-between;gap:1cqw;min-width:0}
+.ps-tile .l{font-size:max(11px,1.45cqw);font-weight:700;color:var(--ink-2)}
+.ps-tile .v{font-size:max(22px,5.2cqw);font-weight:800;letter-spacing:-.035em;line-height:.95}
+.ps-tile .s{font-size:max(10px,1.25cqw);color:var(--ink-2);line-height:1.35}
+.ps-note{margin:0;font-size:max(11px,1.5cqw);color:var(--ink-2)}
+.ps-note b{color:var(--ink)}
+.ps-col{border-top:max(3px,.5cqw) solid var(--c);background:var(--surface-2);border-radius:0 0 1.1cqw 1.1cqw;padding:2cqw 2.2cqw;display:flex;flex-direction:column;gap:.8cqw;min-width:0}
+.ps-col-name{font-size:max(12px,1.8cqw);font-weight:800}
+.ps-col .v{font-size:max(22px,5cqw);font-weight:800;letter-spacing:-.03em;line-height:1}
+.ps-col .s{font-size:max(10px,1.25cqw);color:var(--ink-2)}
+.ps-col dl{margin:auto 0 0;display:grid;grid-template-columns:1fr auto;gap:.9cqw 1cqw;font-size:max(11px,1.5cqw)}
+.ps-col dt{color:var(--ink-2);font-weight:600}
+.ps-col dd{margin:0;font-weight:800;text-align:right}
+.ps-chart{position:relative;flex:1;min-height:0}
+.ps-split{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.6fr);gap:2cqw;flex:1;min-height:0}
+.ps-split .ps-grid{grid-template-rows:1fr 1fr}
+.ps-split .ps-tile .v{font-size:max(20px,3.6cqw)}
+.ps-table{width:100%;border-collapse:collapse;font-size:max(11px,1.4cqw)}
+.ps-table th,.ps-table td{padding:.55cqw 1cqw;border-bottom:1px solid var(--line);white-space:nowrap;background:transparent;position:static}
+.ps-table th{font-size:max(10px,1.15cqw);color:var(--ink-2)}
+.ps-table td.rk{color:var(--ink-2);font-weight:800;width:3cqw}
+.ps-table tbody tr:hover{background:transparent}
+.ps-list{margin:0;padding-left:2.4cqw;display:flex;flex-direction:column;gap:1.4cqw;font-size:max(12px,1.85cqw);line-height:1.35;max-width:62ch}
+.ps-list li::marker{color:var(--orange)}
+.ps-nov{border-left:max(3px,.4cqw) solid var(--green);padding-left:1.6cqw;font-size:max(11px,1.5cqw)}
+.ps-nov b{display:block;margin-bottom:.5cqw}
+.ps-nov ul{margin:0;padding-left:2cqw}
+.ps-cover{flex:1;display:flex;flex-direction:column;justify-content:center;gap:1.4cqw}
+.ps-mark{width:max(32px,5cqw);height:max(32px,5cqw);border-radius:1cqw;background:var(--orange);color:#fff;display:grid;place-items:center;font-weight:800;font-size:max(16px,2.6cqw)}
+.ps-hero{margin:0;font-size:max(30px,7.4cqw);font-weight:800;letter-spacing:-.045em;line-height:.92;max-width:11ch}
+.ps-lead{margin:0;font-size:max(13px,2cqw);font-weight:700}
+.ps-meta{margin:0;font-size:max(11px,1.5cqw);color:var(--ink-2)}
+.ps-empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--ink-2);font-size:max(13px,1.8cqw)}
+.pres-foot{position:absolute;left:5cqw;right:5cqw;bottom:2.2cqw;display:flex;justify-content:space-between;gap:1cqw;font-size:max(10px,1.1cqw);color:var(--ink-2)}
+.pres-arrow{position:absolute;top:50%;transform:translateY(-50%);width:max(34px,3.6cqw);height:max(34px,3.6cqw);border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:grid;place-items:center;opacity:0;transition:opacity .2s;z-index:2;font-size:max(18px,2cqw);line-height:1}
+.pres-stage:hover .pres-arrow,.pres-arrow:focus-visible{opacity:.92}
+.pres-arrow:disabled{display:none}
+.pres-arrow.prev{left:1.2cqw}
+.pres-arrow.next{right:1.2cqw}
+.pres-exit{display:none}
+.pres-dots{display:flex;gap:6px;flex-wrap:wrap}
+.pres-dot{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer}
+.pres-dot[aria-current="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+#presWrap:fullscreen,#presWrap.is-fs{position:fixed;inset:0;z-index:70;background:var(--bg);display:flex;align-items:center;justify-content:center}
+#presWrap:fullscreen .pres-stage,#presWrap.is-fs .pres-stage{width:min(100vw,177.78vh);border-radius:0;border:0}
+#presWrap:fullscreen .pres-exit,#presWrap.is-fs .pres-exit{display:inline-flex;position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:12px;z-index:3}
+@media (max-width:700px){
+  .pres-stage{aspect-ratio:auto;min-height:540px}
+  .ps-grid.g4,.ps-grid.g3{grid-template-columns:1fr 1fr}
+  .ps-split{grid-template-columns:1fr}
+}
+
 .is-hidden{display:none !important}
 
 @media (max-width:1180px){ .kpis{grid-template-columns:repeat(2,minmax(0,1fr))} }
@@ -305,6 +386,7 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
     </div>
   </div>
   <div class="top-actions">
+    <button class="btn btn-green" id="btnPresent" disabled title="Presentar indicadores en pantalla completa"><svg><use href="#i-ppt"/></svg><span class="lbl">Presentar</span></button>
     <button class="btn btn-ghost" id="btnTheme" title="Cambiar tema"><svg><use href="#i-moon"/></svg><span class="lbl">Modo oscuro</span></button>
     <button class="btn" id="btnExportXlsx" disabled><svg><use href="#i-xls"/></svg><span class="lbl">Exportar a Excel</span></button>
     <button class="btn btn-primary" id="btnExportPdf" disabled><svg><use href="#i-pdf"/></svg><span class="lbl">Exportar PDF</span></button>
@@ -355,6 +437,20 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
           <label class="check"><input type="checkbox" id="rememberToggle" checked> Recordar bases en este navegador</label>
           <p class="persist-info" id="persistInfo">Nada guardado todavía.</p>
           <button class="btn" id="btnForget" style="justify-content:center"><svg><use href="#i-trash"/></svg>Borrar bases guardadas</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-h"><h2>Agentes activos</h2><span class="muted num" style="font-size:12px" id="actCount"></span></div>
+      <div class="panel-b">
+        <p class="act-help">Desmarca a los agentes que ya no están en la operación. Sus registros dejan de contar en indicadores, gráficos, exportaciones, calidad y presentaciones. La lista se recuerda en este navegador.</p>
+        <label class="check" style="margin-bottom:8px"><input type="checkbox" id="onlyActive" checked> Ver solo agentes activos</label>
+        <input type="search" class="input" id="actSearch" placeholder="Buscar agente" aria-label="Buscar agente en la lista de activos">
+        <div class="act-list" id="actList"><p class="muted" style="margin:8px 10px;font-size:12px">Carga una base para ver los agentes.</p></div>
+        <div class="filter-actions">
+          <button class="btn" id="actAll" style="justify-content:center">Activar todos</button>
+          <button class="btn" id="actNone" style="justify-content:center">Desactivar todos</button>
         </div>
       </div>
     </section>
@@ -414,6 +510,7 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
         <button class="tab" role="tab" data-view="TIPIF" aria-selected="false" style="--tab-c:#4F8FD8"><span class="dot" style="background:#4F8FD8"></span>Tipificaciones <span class="count num" data-count="TIPIF">0</span></button>
         <button class="tab" role="tab" data-view="TIPAG" aria-selected="false" style="--tab-c:#4F8FD8"><span class="dot" style="background:#4F8FD8"></span>Tipificaciones por agente <span class="count num" data-count="TIPAG">0</span></button>
         <button class="tab" role="tab" data-view="AGENTES" aria-selected="false" style="--tab-c:var(--ink-2)">Por agente <span class="count num" data-count="AGENTES">0</span></button>
+        <button class="tab" role="tab" data-view="PRESENT" aria-selected="false" style="--tab-c:var(--green)"><span class="dot dot-scr"></span>Presentar indicadores</button>
       </nav>
       <p class="view-note" id="viewNote"></p>
       <div class="scope is-hidden" id="scrScopeBox">
@@ -436,6 +533,35 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
           <span class="muted" style="font-size:12px">Toca un agente para ver su tablero.</span>
         </div>
         <div class="ag-grid" id="agGrid"></div>
+      </section>
+
+      <!-- Vista para presentar indicadores -->
+      <section id="presentView" class="is-hidden" style="display:flex;flex-direction:column;gap:12px">
+        <div class="pres-tools">
+          <span class="scope-label">Mostrar</span>
+          <div class="seg" id="presScope" role="group" aria-label="Datos a presentar">
+            <button type="button" data-v="TODO" aria-pressed="true">Consolidado</button>
+            <button type="button" data-v="FRONT" aria-pressed="false">Front</button>
+            <button type="button" data-v="SCRAPING" aria-pressed="false">Scraping</button>
+            <button type="button" data-v="REMARCADOS" aria-pressed="false">Remarcados</button>
+          </div>
+          <span class="grow"></span>
+          <button class="btn" id="presPrev">Anterior</button>
+          <span class="muted num" style="font-size:12.5px" id="presCounter"></span>
+          <button class="btn" id="presNext">Siguiente</button>
+          <button class="btn btn-primary" id="presFs"><svg><use href="#i-ppt"/></svg><span>Pantalla completa</span></button>
+        </div>
+        <div id="presWrap">
+          <div class="pres-stage" id="presStage">
+            <div class="pres-slide" id="presSlide"></div>
+            <button type="button" class="pres-arrow prev" id="presArrPrev" aria-label="Diapositiva anterior">&#8249;</button>
+            <button type="button" class="pres-arrow next" id="presArrNext" aria-label="Diapositiva siguiente">&#8250;</button>
+            <div class="pres-foot"><span id="presFootL"></span><span class="num" id="presPage"></span></div>
+          </div>
+          <button type="button" class="btn pres-exit" id="presExit"><svg><use href="#i-x"/></svg>Salir</button>
+        </div>
+        <div class="pres-dots" id="presDots" aria-label="Diapositivas"></div>
+        <p class="muted" style="font-size:12px;margin:0">Avanza con las flechas del teclado o la barra espaciadora; la tecla F activa la pantalla completa. Los datos respetan los filtros del panel lateral y los agentes activos. Las novedades escritas en "Presentación semanal" aparecen en la última diapositiva.</p>
       </section>
 
       <!-- Vista Tipificaciones (general) -->
@@ -663,6 +789,8 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
             <li>"Recordar bases en este navegador" guarda los Excel cargados en este equipo y los vuelve a abrir solos. No se comparten con otros computadores ni personas. "Borrar bases guardadas" los elimina.</li>
             <li>Tipificaciones: una pestaña con el reparto general de Front y Scraping (y su comparación) y otra con la matriz agente × tipificación.</li>
             <li>Calidad: se lee la hoja de monitoreos (fecha, agente, campaña, nota, tipificación y hallazgo). La nota 0 cuenta como crítica.</li>
+            <li>Agentes activos: desmarca en el panel lateral a quien ya no está y sus resultados dejan de aparecer en todo el tablero.</li>
+            <li>Presentar indicadores: arma diapositivas con los datos filtrados para mostrarlas en reunión, en pantalla completa.</li>
             <li>Las pestañas separan la vista: Consolidado (todo), Front y Scraping (sin remarcados), Remarcados (de cualquier base) y Por agente.</li>
           </ul>
           <h4 style="margin-top:14px">Estructura esperada del Excel</h4>
@@ -812,6 +940,14 @@ function detectColumns(headers, rows, RULES){
 }
 
 /* ---------- Estado ---------- */
+/* ---------- Agentes activos (se guardan en este navegador) ---------- */
+var ACT = { only: true, off: {} };
+try { var _act = JSON.parse(localStorage.getItem('habi-agentes-inactivos') || '{}'); if (_act.off) ACT.off = _act.off; if (_act.only === false) ACT.only = false; } catch (e){}
+function saveAct(){ try { localStorage.setItem('habi-agentes-inactivos', JSON.stringify(ACT)); } catch (e){} }
+var agKeyCache = {};
+function agKey(n){ return agKeyCache[n] || (agKeyCache[n] = norm(n)); }
+function agOn(n){ return !ACT.only || !ACT.off[agKey(n)]; }
+
 var state = {
   bases: { FRONT: null, SCRAPING: null },
   filters: { desde: NaN, hasta: NaN, agente: '', obs: '', tipo: '' },
@@ -957,8 +1093,9 @@ function populateFilterOptions(){
       if (isFinite(r.t)){ if (r.t < minT) minT = r.t; if (r.t > maxT) maxT = r.t; }
     }
   });
-  fillSelect($('#fAgente'), Object.keys(ags), 'Todos', state.filters.agente);
+  fillSelect($('#fAgente'), Object.keys(ags).filter(agOn), 'Todos', state.filters.agente);
   populateWeeks();
+  renderActiveList();
   fillSelect($('#fObs'), Object.keys(obs), 'Todas', state.filters.obs);
   if (isFinite(minT)){
     ['#fDesde', '#fHasta'].forEach(function(s){ $(s).min = dayToInput(minT); $(s).max = dayToInput(maxT); });
@@ -981,7 +1118,7 @@ function readFilters(){
   }
 }
 /* Pestañas: Front y Scraping excluyen remarcados; Remarcados junta los de ambas bases */
-var VIEW_LABEL = { TODO: 'Consolidado', FRONT: 'Front', SCRAPING: 'Scraping', REMARCADOS: 'Remarcados', AGENTES: 'Por agente', CALIDAD: 'Calidad', TIPIF: 'Tipificaciones', TIPAG: 'Tipificaciones por agente' };
+var VIEW_LABEL = { TODO: 'Consolidado', FRONT: 'Front', SCRAPING: 'Scraping', REMARCADOS: 'Remarcados', AGENTES: 'Por agente', CALIDAD: 'Calidad', TIPIF: 'Tipificaciones', TIPAG: 'Tipificaciones por agente', PRESENT: 'Presentación' };
 function inView(r, v){
   if (v === 'FRONT') return r.src === 'FRONT' && r.tipo !== 'Remarcado';
   if (v === 'SCRAPING') return r.src === 'SCRAPING' && r.tipo !== 'Remarcado';
@@ -1001,6 +1138,7 @@ function applyFilters(){
       if (hasH && !(r.t <= f.hasta)) continue;
       if (f.agente && r.ag !== f.agente) continue;
       if (f.obs && r.obs !== f.obs) continue;
+      if (!agOn(r.ag)) continue;
       if (f.tipo && r.tipo !== f.tipo) continue;
       out.push(r);
     }
@@ -1280,13 +1418,13 @@ function weekRecs(start){
   var end = start + 6 * DAY, out = [];
   ['FRONT','SCRAPING'].forEach(function(s){
     var b = state.bases[s]; if (!b) return;
-    for (var i = 0; i < b.recs.length; i++){ var r = b.recs[i]; if (r.t >= start && r.t <= end) out.push(r); }
+    for (var i = 0; i < b.recs.length; i++){ var r = b.recs[i]; if (r.t >= start && r.t <= end && agOn(r.ag)) out.push(r); }
   });
   return out;
 }
 function weekQuality(start){
   var q = state.q.base, end = start + 6 * DAY;
-  return q ? q.recs.filter(function(r){ return r.t >= start && r.t <= end; }) : [];
+  return q ? q.recs.filter(function(r){ return r.t >= start && r.t <= end && agOn(r.ag); }) : [];
 }
 function populateWeeks(){
   var weeks = {};
@@ -1564,6 +1702,7 @@ var VIEW_NOTE = {
   FRONT: 'Base Front sin remarcados.',
   SCRAPING: 'Base Scraping sin remarcados.',
   REMARCADOS: 'Registros con "Remarcado" en la fecha de asignación, de cualquier base.',
+  PRESENT: 'Diapositivas con los indicadores filtrados, listas para presentar.',
   AGENTES: 'Resultados de cada agente separados en Front, Scraping y Remarcados. Respeta los filtros del panel lateral.',
   CALIDAD: 'Notas de monitoreo por agente. Usa los filtros de esta pestaña y el rango de fechas del panel lateral.',
   TIPIF: 'Cómo se reparten las tipificaciones en Front y en Scraping.',
@@ -1690,7 +1829,7 @@ function populateQualityFilters(){
     return '<option value="' + k + '"' + (k === curM ? ' selected' : '') + '>' + MESES[mo].charAt(0).toUpperCase() + MESES[mo].slice(1) + ' ' + y + '</option>';
   }).join('');
   fillSelect($('#qCamp'), Object.keys(camps), 'Todas', $('#qCamp').value);
-  fillSelect($('#qAgente'), Object.keys(ags), 'Todos', $('#qAgente').value);
+  fillSelect($('#qAgente'), Object.keys(ags).filter(agOn), 'Todos', $('#qAgente').value);
 }
 function qMeta(){ var v = parseFloat($('#qMeta').value); return isFinite(v) ? v : 90; }
 function qSem(x, meta){ return x >= meta ? 'ok' : x >= meta - 10 ? 'warn' : 'bad'; }
@@ -1705,6 +1844,7 @@ function qApply(){
     if (mes && r.mes !== mes) return false;
     if (camp && r.camp !== camp) return false;
     if (ag && r.ag !== ag) return false;
+    if (!agOn(r.ag)) return false;
     return true;
   });
 }
@@ -2002,6 +2142,222 @@ function restoreBases(){
   }).catch(function(){ renderPersistInfo(); });
 }
 
+
+/* =========================================================
+   AGENTES ACTIVOS: lista para marcar quién sigue en la operación
+   ========================================================= */
+var actKeys = [];
+function renderActiveList(){
+  var by = {};
+  function add(name, k){ var key = agKey(name), a = by[key] || (by[key] = { key: key, name: name, n: 0, q: 0 }); a[k]++; }
+  allRecs().forEach(function(list){ for (var i = 0; i < list.length; i++) add(list[i].ag, 'n'); });
+  if (state.q.base) state.q.base.recs.forEach(function(r){ add(r.ag, 'q'); });
+  var all = Object.keys(by).map(function(k){ return by[k]; }).sort(function(a, b){ return a.name.localeCompare(b.name, 'es'); });
+  actKeys = all.map(function(a){ return a.key; });
+  updateActCount();
+  var q = norm($('#actSearch').value);
+  var vis = all.filter(function(a){ return !q || a.key.indexOf(q) !== -1; });
+  $('#actList').innerHTML = vis.length ? vis.map(function(a){
+    var on = !ACT.off[a.key];
+    var cnt = a.n ? fmtN.format(a.n) : fmtN.format(a.q) + ' mon.';
+    return '<label class="act-row' + (on ? '' : ' off') + '"><input type="checkbox" data-act="' + esc(a.key) + '"' + (on ? ' checked' : '') + '>' +
+      '<span class="nm" title="' + esc(a.name) + '">' + esc(a.name) + '</span><span class="cnt muted num" title="Registros de gestión' + (a.q ? ' y ' + a.q + ' monitoreos' : '') + '">' + cnt + '</span></label>';
+  }).join('') : '<p class="muted" style="margin:8px 10px;font-size:12px">' + (all.length ? 'Ningún agente coincide con la búsqueda.' : 'Carga una base para ver los agentes.') + '</p>';
+  $('#actList').classList.toggle('dim', !ACT.only);
+  $('#onlyActive').checked = ACT.only;
+}
+function updateActCount(){
+  var off = actKeys.filter(function(k){ return ACT.off[k]; }).length;
+  $('#actCount').textContent = actKeys.length ? fmtN.format(actKeys.length - off) + ' de ' + fmtN.format(actKeys.length) + ' activos' : '';
+}
+function applyActive(){
+  saveAct();
+  updateActCount();
+  var ags = {};
+  allRecs().forEach(function(list){ for (var i = 0; i < list.length; i++) ags[list[i].ag] = 1; });
+  fillSelect($('#fAgente'), Object.keys(ags).filter(agOn), 'Todos', $('#fAgente').value);
+  if (state.q.base) populateQualityFilters();
+  if (state.bases.FRONT || state.bases.SCRAPING || state.q.base){ refresh(); updatePptPreview(); }
+}
+
+/* =========================================================
+   PRESENTAR INDICADORES: diapositivas en el navegador
+   ========================================================= */
+var pres = { i: 0, n: 0, scope: 'TODO', chart: null };
+var PRES_SCOPE = { TODO: 'Consolidado', FRONT: 'Front sin remarcados', SCRAPING: 'Scraping sin remarcados', REMARCADOS: 'Base de remarcación' };
+function presList(){ return pres.scope === 'TODO' ? state.pool : state.pool.filter(function(r){ return inView(r, pres.scope); }); }
+function presPeriodo(list){
+  var a = state.filters.desde, b = state.filters.hasta, mn = Infinity, mx = -Infinity;
+  list.forEach(function(r){ if (isFinite(r.t)){ if (r.t < mn) mn = r.t; if (r.t > mx) mx = r.t; } });
+  if (!isFinite(a)) a = mn; if (!isFinite(b)) b = mx;
+  return isFinite(a) && isFinite(b) && a <= b ? 'Periodo ' + rangoTexto(a, b) : 'Sin fechas de gestión';
+}
+function pHead(title, sub){ return '<header class="ps-head"><h3 class="ps-title">' + esc(title) + '</h3>' + (sub ? '<p class="ps-sub">' + esc(sub) + '</p>' : '') + '</header>'; }
+function pTile(label, value, sub, color){
+  return '<div class="ps-tile"><span class="l">' + esc(label) + '</span><span class="v num"' + (color ? ' style="color:' + color + '"' : '') + '>' + value + '</span><span class="s">' + (sub || '') + '</span></div>';
+}
+function presFont(){ var w = $('#presStage').clientWidth || 900; return Math.max(10, Math.round(w / 78)); }
+function efeOf(a){ return a.gest ? a.comp / a.gest : 0; }
+
+function presSlides(){
+  var list = presList(), A = aggregate(list), per = presPeriodo(list), S = [];
+  var efe = A.gest ? A.comp / A.gest : NaN, con = A.gest ? A.contact / A.gest : NaN;
+  var ags = Object.keys(A.byAg).map(function(k){ return A.byAg[k]; }).filter(function(a){ return a.gest > 0; });
+  var inact = actKeys.filter(function(k){ return ACT.off[k]; }).length;
+
+  /* Portada */
+  S.push({ name: 'Portada', html: '<div class="ps-cover"><div class="ps-mark" aria-hidden="true">A</div><p class="ps-sub">Asertis BPS para Habi</p>' +
+    '<h2 class="ps-hero">Indicadores operativos</h2><p class="ps-lead">' + esc(PRES_SCOPE[pres.scope]) + '. ' + esc(per) + '.</p>' +
+    '<p class="ps-meta">' + fmtN.format(A.gest) + ' registros gestionados por ' + fmtN.format(ags.length) + (ags.length === 1 ? ' agente' : ' agentes') +
+    (ACT.only && inact ? ' activos (' + fmtN.format(inact) + ' inactivos excluidos)' : '') + '.</p></div>' });
+
+  if (!A.gest){
+    S.push({ name: 'Sin datos', html: pHead('Sin registros gestionados', per) + '<div class="ps-empty">No hay registros con tipificación para estos filtros y agentes activos.</div>' });
+  } else {
+    /* Resumen */
+    S.push({ name: 'Resumen', html: pHead('Resumen de la operación', per) +
+      '<div class="ps-grid g4">' +
+        pTile('Gestionados', fmtN.format(A.gest), fmtN.format(A.total) + ' registros en la base') +
+        pTile('Completos', fmtN.format(A.comp), A.contact ? fmtPct(A.comp / A.contact) + ' de los contactos' : '') +
+        pTile('Efectividad', fmtPct(efe), semaforo(efe)[1] + '. Completos ÷ gestionados', colorByThreshold(efe)) +
+        pTile('Contactabilidad', fmtPct(con), semaforo(con)[1] + '. Contactos ÷ gestionados', colorByThreshold(con)) +
+      '</div><p class="ps-note">No contesta: <b>' + fmtN.format(A.nc) + '</b> registros, ' + fmtPct(A.nc / A.gest) + ' de lo gestionado. Semáforo: verde desde 70 %, amarillo de 50 % a 69 %, rojo por debajo de 50 %.</p>' });
+
+    /* Por base */
+    if (pres.scope === 'TODO'){
+      var groups = [['Front', 'FRONT', C.orange], ['Scraping', 'SCRAPING', C.green], ['Remarcados', 'REMARCADOS', '#B5541A']].map(function(g){
+        return [g, aggregate(list.filter(function(r){ return inView(r, g[1]); }))];
+      }).filter(function(x){ return x[1].gest > 0; });
+      if (groups.length > 1){
+        S.push({ name: 'Por base', html: pHead('Resultados por base', 'Front y Scraping sin remarcados; la base de remarcación va aparte') +
+          '<div class="ps-grid g' + groups.length + '">' + groups.map(function(x){
+            var g = x[0], B = x[1], e = B.comp / B.gest, c = B.contact / B.gest;
+            return '<div class="ps-col" style="--c:' + g[2] + '"><span class="ps-col-name">' + g[0] + '</span><span class="v num">' + fmtN.format(B.comp) + '</span>' +
+              '<span class="s">completos de ' + fmtN.format(B.gest) + ' gestionados</span><dl>' +
+              '<dt>Efectividad</dt><dd class="num" style="color:' + colorByThreshold(e) + '">' + fmtPct(e) + '</dd>' +
+              '<dt>Contactabilidad</dt><dd class="num">' + fmtPct(c) + '</dd>' +
+              '<dt>No contesta</dt><dd class="num">' + fmtN.format(B.nc) + '</dd></dl></div>';
+          }).join('') + '</div>' });
+      }
+    }
+
+    /* Completos por día */
+    var days = Object.keys(A.byDay).map(Number).sort(function(a, b){ return a - b; });
+    if (days.length > 1){
+      var dTot = function(d){ return A.byDay[d].FRONT + A.byDay[d].SCRAPING; };
+      var best = days.slice().sort(function(a, b){ return dTot(b) - dTot(a); })[0];
+      S.push({ name: 'Por día', html: pHead('Completos por día', 'El mejor día fue el ' + dayLabel(best) + ' con ' + fmtN.format(dTot(best)) + ' completos') +
+        '<div class="ps-chart"><canvas id="presCanvas"></canvas></div>', chart: function(fs){
+          var ds = [];
+          [['Front', 'FRONT', C.orange], ['Scraping', 'SCRAPING', C.green]].forEach(function(g){
+            if (days.some(function(d){ return A.byDay[d][g[1]]; })) ds.push({ label: g[0], data: days.map(function(d){ return A.byDay[d][g[1]]; }), borderColor: g[2], backgroundColor: g[2], tension: .3, pointRadius: fs / 3, borderWidth: fs / 4 });
+          });
+          return { type: 'line', labels: days.map(fmtDayShort), datasets: ds, options: { interaction: { mode: 'index', intersect: false } } };
+        } });
+    }
+
+    /* Efectividad por agente */
+    var elig = ags.filter(function(a){ return a.gest >= 20; }); if (!elig.length) elig = ags;
+    var byE = elig.slice().sort(function(a, b){ return efeOf(b) - efeOf(a); }).slice(0, 20);
+    S.push({ name: 'Efectividad', html: pHead('Efectividad por agente', 'Completos ÷ gestionados' + (elig.length < ags.length ? ', agentes con 20 o más gestiones' : '')) +
+      '<div class="ps-chart"><canvas id="presCanvas"></canvas></div>', chart: function(){
+        var v = byE.map(efeOf);
+        return { type: 'bar', labels: byE.map(function(a){ return shortName(a.agente); }), datasets: [{ label: 'Efectividad', data: v, backgroundColor: v.map(colorByThreshold), borderRadius: 4, maxBarThickness: 46 }],
+          options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c){ return ' ' + fmtPct(c.parsed.y); } } } },
+            scales: { y: { max: 1, ticks: { callback: function(x){ return Math.round(x * 100) + '%'; } } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30 } } } } };
+      } });
+
+    /* Ranking */
+    var rk = ags.slice().sort(function(a, b){ return b.comp - a.comp || efeOf(b) - efeOf(a); }).slice(0, 10);
+    S.push({ name: 'Ranking', html: pHead('Ranking de agentes por completos', ags.length > 10 ? 'Los 10 agentes con más completos de ' + ags.length : fmtN.format(ags.length) + ' agentes') +
+      '<div style="flex:1;min-height:0;overflow:hidden"><table class="ps-table"><thead><tr><th></th><th>Agente</th><th class="r">Gestionados</th><th class="r">Completos</th><th class="r">Efectividad</th><th class="r">Contactabilidad</th></tr></thead><tbody>' +
+      rk.map(function(a, i){
+        var e = efeOf(a), c = a.gest ? a.contact / a.gest : 0;
+        return '<tr><td class="rk num">' + (i + 1) + '</td><td>' + esc(a.agente) + '</td><td class="r num">' + fmtN.format(a.gest) + '</td><td class="r num"><b>' + fmtN.format(a.comp) + '</b></td>' +
+          '<td class="r num"><span class="pct"><span class="dot" style="background:' + colorByThreshold(e) + '"></span>' + fmtPct(e) + '</span></td><td class="r num">' + fmtPct(c) + '</td></tr>';
+      }).join('') + '</tbody></table></div>' });
+  }
+
+  /* Calidad */
+  var QA = null, meta = qMeta();
+  if (state.q.base){
+    qApply();
+    QA = qAggregate(state.q.filtered, meta);
+    if (QA.n){
+      var qa = Object.keys(QA.byAg).map(function(k){ var a = QA.byAg[k]; a.prom = a.sum / a.n; return a; }).sort(function(a, b){ return b.prom - a.prom; }).slice(0, 18);
+      S.push({ name: 'Calidad', html: pHead('Calidad de los monitoreos', fmtN.format(QA.n) + ' monitoreos de ' + fmtN.format(Object.keys(QA.byAg).length) + ' agentes, meta de ' + meta) +
+        '<div class="ps-split"><div class="ps-grid g2">' +
+          pTile('Nota promedio', fmtNota(QA.prom), QA.prom >= meta ? 'En meta' : 'Bajo la meta', qColor(QA.prom, meta)) +
+          pTile('En meta', fmtPct(QA.enMeta / QA.n), fmtN.format(QA.enMeta) + ' con nota ≥ ' + meta) +
+          pTile('Sin hallazgo', fmtPct(QA.sinH / QA.n), fmtN.format(QA.sinH) + ' monitoreos') +
+          pTile('Críticos', fmtN.format(QA.crit), 'monitoreos con nota 0', QA.crit ? C.red : '') +
+        '</div><div class="ps-chart"><canvas id="presCanvas"></canvas></div></div>', chart: function(fs){
+          var t = themeColors();
+          return { type: 'bar', labels: qa.map(function(a){ return shortName(a.ag); }), datasets: [
+            { type: 'bar', label: 'Nota promedio', data: qa.map(function(a){ return +a.prom.toFixed(1); }), backgroundColor: qa.map(function(a){ return qColor(a.prom, meta); }), borderRadius: 4, maxBarThickness: 40, order: 2 },
+            { type: 'line', label: 'Meta', data: qa.map(function(){ return meta; }), borderColor: t.ink, borderDash: [6, 4], borderWidth: Math.max(1.5, fs / 8), pointRadius: 0, order: 1 }],
+            options: { scales: { y: { max: 100 }, x: { ticks: { autoSkip: false, maxRotation: 50, minRotation: 35 } } } } };
+        } });
+    }
+  }
+
+  /* Puntos a destacar */
+  var pts = [];
+  if (A.gest){
+    pts.push('La efectividad fue de <b>' + fmtPct(efe) + '</b> (' + semaforo(efe)[1].toLowerCase() + ') y la contactabilidad de <b>' + fmtPct(con) + '</b>.');
+    var base = ags.filter(function(a){ return a.gest >= 20; }); if (!base.length) base = ags;
+    var bE = base.slice().sort(function(a, b){ return efeOf(b) - efeOf(a); })[0];
+    var bC = ags.slice().sort(function(a, b){ return b.comp - a.comp; })[0];
+    pts.push('Mejor efectividad: <b>' + esc(bE.agente) + '</b> con ' + fmtPct(efeOf(bE)) + ' (' + fmtN.format(bE.comp) + ' completos).');
+    if (bC !== bE) pts.push('Más completos: <b>' + esc(bC.agente) + '</b> con ' + fmtN.format(bC.comp) + '.');
+    var low = base.filter(function(a){ return efeOf(a) < 0.5; });
+    pts.push(low.length ? fmtN.format(low.length) + (low.length === 1 ? ' agente quedó' : ' agentes quedaron') + ' por debajo del 50 % de efectividad: ' +
+      low.slice(0, 6).map(function(a){ return esc(a.agente); }).join(', ') + (low.length > 6 ? ' y ' + (low.length - 6) + ' más' : '') + '.' : 'Ningún agente quedó por debajo del 50 % de efectividad.');
+  }
+  if (QA && QA.n){
+    var bajo = Object.keys(QA.byAg).filter(function(k){ return QA.byAg[k].sum / QA.byAg[k].n < meta; }).length;
+    pts.push('La nota de calidad promedio fue <b>' + fmtNota(QA.prom) + '</b> frente a una meta de ' + meta + '; ' + (bajo ? fmtN.format(bajo) + (bajo === 1 ? ' agente está' : ' agentes están') + ' bajo la meta.' : 'todos los agentes están en meta.'));
+  }
+  var nov = $('#pptNov').value.split(/\n+/).map(function(x){ return x.trim(); }).filter(Boolean);
+  if (pts.length || nov.length){
+    S.push({ name: 'Puntos a destacar', html: pHead('Puntos a destacar', per) + '<ul class="ps-list">' + pts.map(function(p){ return '<li>' + p + '</li>'; }).join('') + '</ul>' +
+      (nov.length ? '<div class="ps-nov"><b>Novedades</b><ul>' + nov.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>' : '') });
+  }
+  return S;
+}
+function renderPresentation(){
+  var slides = presSlides(); pres.n = slides.length;
+  if (pres.i > slides.length - 1) pres.i = slides.length - 1; if (pres.i < 0) pres.i = 0;
+  var sl = slides[pres.i];
+  if (pres.chart){ pres.chart.destroy(); pres.chart = null; }
+  $('#presSlide').innerHTML = sl.html;
+  $('#presPage').textContent = (pres.i + 1) + ' / ' + slides.length;
+  $('#presCounter').textContent = (pres.i + 1) + ' de ' + slides.length;
+  $('#presFootL').textContent = 'Tablero operativo Habi, ' + PRES_SCOPE[pres.scope];
+  $('#presDots').innerHTML = slides.map(function(s, i){ return '<button type="button" class="pres-dot" data-i="' + i + '" aria-current="' + (i === pres.i) + '">' + esc(s.name) + '</button>'; }).join('');
+  $('#presPrev').disabled = $('#presArrPrev').disabled = pres.i === 0;
+  $('#presNext').disabled = $('#presArrNext').disabled = pres.i === slides.length - 1;
+  if (sl.chart){
+    var fs = presFont(), cfg = sl.chart(fs);
+    var o = baseOptions(deepMerge({ animation: { duration: 300 },
+      plugins: { legend: { labels: { font: { size: fs }, boxWidth: fs, boxHeight: fs } }, tooltip: { titleFont: { size: fs }, bodyFont: { size: fs } } },
+      scales: { x: { ticks: { font: { size: fs } } }, y: { ticks: { font: { size: fs } } } } }, cfg.options || {}));
+    pres.chart = new Chart(document.getElementById('presCanvas'), { type: cfg.type, data: { labels: cfg.labels, datasets: cfg.datasets }, options: o });
+  }
+}
+function presGo(d){ pres.i = Math.max(0, Math.min(pres.n - 1, pres.i + d)); renderPresentation(); }
+function presIsFs(){ return !!document.fullscreenElement || $('#presWrap').classList.contains('is-fs'); }
+function presFsLabel(){ $('#presFs span').textContent = presIsFs() ? 'Salir de pantalla completa' : 'Pantalla completa'; }
+function presFull(){
+  var w = $('#presWrap');
+  if (presIsFs()){
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function(){});
+    w.classList.remove('is-fs'); presFsLabel(); renderPresentation(); return;
+  }
+  var fallback = function(){ w.classList.add('is-fs'); presFsLabel(); renderPresentation(); };
+  if (w.requestFullscreen){ try { w.requestFullscreen().catch(fallback); } catch (e){ fallback(); } } else fallback();
+}
+
 /* ---------- Orquestación ---------- */
 function onDataChanged(repopulate){
   var has = !!(state.bases.FRONT || state.bases.SCRAPING || state.q.base);
@@ -2009,6 +2365,8 @@ function onDataChanged(repopulate){
   $('#dash').classList.toggle('is-hidden', !has);
   $('#btnExportXlsx').disabled = !has;
   $('#btnExportPdf').disabled = !has;
+  $('#btnPresent').disabled = !has;
+  if (!has) renderActiveList();
   if (!has){ populateWeeks(); return; }
   if (repopulate) populateFilterOptions();
   refresh();
@@ -2016,15 +2374,17 @@ function onDataChanged(repopulate){
 function refresh(){
   readFilters();
   applyFilters();
-  var ag = state.view === 'AGENTES', cal = state.view === 'CALIDAD', tg = state.view === 'TIPIF', ta = state.view === 'TIPAG';
+  var ag = state.view === 'AGENTES', cal = state.view === 'CALIDAD', tg = state.view === 'TIPIF', ta = state.view === 'TIPAG', pr = state.view === 'PRESENT';
+  $('#presentView').classList.toggle('is-hidden', !pr);
   $('#agentView').classList.toggle('is-hidden', !ag);
   $('#qualityView').classList.toggle('is-hidden', !cal);
   $('#tipView').classList.toggle('is-hidden', !tg);
   $('#tipAgView').classList.toggle('is-hidden', !ta);
-  $('#dashMain').classList.toggle('is-hidden', ag || cal || tg || ta);
+  $('#dashMain').classList.toggle('is-hidden', ag || cal || tg || ta || pr);
   var missing = (state.view === 'FRONT' || state.view === 'SCRAPING') && !state.bases[state.view];
   $('#viewNote').textContent = missing ? 'Aún no has cargado la base ' + VIEW_LABEL[state.view] + '. Usa el botón del panel lateral.' : VIEW_NOTE[state.view];
   $('#scrScopeBox').classList.toggle('is-hidden', state.view !== 'SCRAPING');
+  if (pr){ renderPresentation(); return; }
   if (ag){ renderAgentCards(); return; }
   if (cal){ renderQuality(); return; }
   if (tg){ renderTipGeneral(); return; }
@@ -2242,6 +2602,47 @@ function bind(){
   $('#sTipAg').addEventListener('input', debounce(drawTipMatrix, 150));
   $('#btnExportTip').addEventListener('click', exportTip);
   $('#btnExportTipAg').addEventListener('click', exportTipAg);
+
+  /* Agentes activos */
+  $('#actList').addEventListener('change', function(e){
+    var cb = e.target.closest('[data-act]'); if (!cb) return;
+    if (cb.checked) delete ACT.off[cb.dataset.act]; else ACT.off[cb.dataset.act] = 1;
+    cb.parentNode.classList.toggle('off', !cb.checked);
+    applyActive();
+  });
+  $('#actSearch').addEventListener('input', debounce(renderActiveList, 150));
+  $('#onlyActive').addEventListener('change', function(){ ACT.only = this.checked; $('#actList').classList.toggle('dim', !ACT.only); applyActive(); });
+  $('#actAll').addEventListener('click', function(){ ACT.off = {}; renderActiveList(); applyActive(); });
+  $('#actNone').addEventListener('click', function(){
+    if (!actKeys.length) return;
+    actKeys.forEach(function(k){ ACT.off[k] = 1; }); renderActiveList(); applyActive();
+    toast('Todos los agentes quedaron inactivos. Marca los que siguen en la operación.', 'info');
+  });
+  /* Presentar indicadores */
+  $$('#presScope button').forEach(function(b){ b.addEventListener('click', function(){
+    $$('#presScope button').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    pres.scope = b.dataset.v; pres.i = 0; renderPresentation();
+  }); });
+  $('#presPrev').addEventListener('click', function(){ presGo(-1); });
+  $('#presNext').addEventListener('click', function(){ presGo(1); });
+  $('#presArrPrev').addEventListener('click', function(){ presGo(-1); });
+  $('#presArrNext').addEventListener('click', function(){ presGo(1); });
+  $('#presDots').addEventListener('click', function(e){ var b = e.target.closest('[data-i]'); if (b){ pres.i = +b.dataset.i; renderPresentation(); } });
+  $('#presFs').addEventListener('click', presFull);
+  $('#presExit').addEventListener('click', presFull);
+  $('#btnPresent').addEventListener('click', function(){ setView('PRESENT'); if (!presIsFs()) presFull(); });
+  document.addEventListener('fullscreenchange', function(){ presFsLabel(); if (state.view === 'PRESENT') renderPresentation(); });
+  window.addEventListener('resize', debounce(function(){ if (state.view === 'PRESENT') renderPresentation(); }, 200));
+  document.addEventListener('keydown', function(e){
+    if (state.view !== 'PRESENT' || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    var k = e.key;
+    if (k === 'ArrowRight' || k === 'PageDown' || (k === ' ' && e.target.tagName !== 'BUTTON')){ e.preventDefault(); presGo(1); }
+    else if (k === 'ArrowLeft' || k === 'PageUp'){ e.preventDefault(); presGo(-1); }
+    else if (k === 'Home'){ pres.i = 0; renderPresentation(); }
+    else if (k === 'End'){ pres.i = pres.n - 1; renderPresentation(); }
+    else if (k === 'f' || k === 'F'){ presFull(); }
+    else if (k === 'Escape' && $('#presWrap').classList.contains('is-fs')){ presFull(); }
+  });
   /* Pestañas */
   $$('#tabs .tab').forEach(function(t){ t.addEventListener('click', function(){ setView(t.dataset.view); }); });
   /* Vista por agente: buscar, ordenar y abrir el tablero del agente */
