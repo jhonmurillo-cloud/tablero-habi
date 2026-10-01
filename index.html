@@ -261,6 +261,24 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
 .toast.info{border-left-color:var(--orange)}
 
 
+
+.pm summary{padding:12px 16px;cursor:pointer;font-weight:700;font-size:14px}
+.pm-body{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:0 16px 10px}
+.pm fieldset{border:1px solid var(--line);border-radius:10px;margin:0;padding:8px 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;min-width:0}
+.pm legend{font-size:12.5px;font-weight:700;padding:0 4px;display:inline-flex;align-items:center;gap:6px}
+.pm label{display:flex;flex-direction:column;justify-content:flex-end;gap:4px;font-size:11.5px;font-weight:600;color:var(--ink-2);min-width:0}
+.pm-help{font-size:12px;color:var(--ink-2);margin:0;padding:0 16px 14px;max-width:110ch}
+@media (max-width:1180px){.pm-body{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.pm-body{grid-template-columns:1fr}}
+.ps-prog{height:max(4px,.5cqw);background:var(--line);border-radius:999px;overflow:hidden}
+.ps-prog span{display:block;height:100%;border-radius:999px}
+.ps-split.base{grid-template-columns:minmax(0,1.05fr) minmax(0,1.3fr)}
+.ps-split .ps-grid.r3{grid-template-rows:repeat(3,minmax(0,1fr));gap:1.2cqw}
+.ps-grid.r3 .ps-tile{padding:1.2cqw 1.5cqw;gap:.4cqw;justify-content:center}
+.ps-grid.r3 .ps-tile .v{font-size:max(18px,3.1cqw)}
+.ps-grid.r3 .ps-tile .l{font-size:max(10px,1.25cqw)}
+.ps-grid.r3 .ps-tile .s{font-size:max(9px,1.1cqw)}
+.ps-pill{display:inline-block;padding:.2cqw .8cqw;border-radius:999px;font-weight:800;color:#fff}
 /* ---------- Agentes activos ---------- */
 .act-list{max-height:250px;overflow:auto;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--surface-2);margin:8px 0 10px}
 .act-list.dim{opacity:.55}
@@ -538,19 +556,35 @@ pre.code{background:var(--surface-2);border:1px solid var(--line);border-radius:
       <!-- Vista para presentar indicadores -->
       <section id="presentView" class="is-hidden" style="display:flex;flex-direction:column;gap:12px">
         <div class="pres-tools">
-          <span class="scope-label">Mostrar</span>
-          <div class="seg" id="presScope" role="group" aria-label="Datos a presentar">
-            <button type="button" data-v="TODO" aria-pressed="true">Consolidado</button>
-            <button type="button" data-v="FRONT" aria-pressed="false">Front</button>
-            <button type="button" data-v="SCRAPING" aria-pressed="false">Scraping</button>
-            <button type="button" data-v="REMARCADOS" aria-pressed="false">Remarcados</button>
-          </div>
+          <span class="scope-label">Orden: Resumen, Front, Scraping, Remarcados y agentes</span>
           <span class="grow"></span>
           <button class="btn" id="presPrev">Anterior</button>
           <span class="muted num" style="font-size:12.5px" id="presCounter"></span>
           <button class="btn" id="presNext">Siguiente</button>
           <button class="btn btn-primary" id="presFs"><svg><use href="#i-ppt"/></svg><span>Pantalla completa</span></button>
         </div>
+        <details class="panel pm" id="presMetas" open>
+          <summary>Metas para la presentación</summary>
+          <div class="pm-body">
+            <fieldset><legend><span class="dot dot-front"></span>Front sin remarcados</legend>
+              <label>Completos<input type="number" min="0" step="any" class="input" data-pm="frComp" placeholder="Ej.: 3000"></label>
+              <label>Efectividad %<input type="number" min="0" max="100" step="any" class="input" data-pm="frEfe" placeholder="Ej.: 45"></label>
+            </fieldset>
+            <fieldset><legend><span class="dot dot-scr"></span>Scraping</legend>
+              <label>Completos<input type="number" min="0" step="any" class="input" data-pm="scComp" placeholder="Ej.: 4500"></label>
+              <label>Efectividad %<input type="number" min="0" max="100" step="any" class="input" data-pm="scEfe" placeholder="Ej.: 40"></label>
+            </fieldset>
+            <fieldset><legend><span class="dot" style="background:#B5541A"></span>Remarcados</legend>
+              <label>Completos<input type="number" min="0" step="any" class="input" data-pm="remComp" placeholder="Ej.: 500"></label>
+              <label>Efectividad %<input type="number" min="0" max="100" step="any" class="input" data-pm="remEfe" placeholder="Ej.: 35"></label>
+            </fieldset>
+            <fieldset><legend>Por agente</legend>
+              <label>Completos por día<input type="number" min="0" step="any" class="input" data-pm="agDia" placeholder="Ej.: 55"></label>
+              <label>Efectividad %<input type="number" min="0" max="100" step="any" class="input" data-pm="agEfe" placeholder="Ej.: 45"></label>
+            </fieldset>
+          </div>
+          <p class="pm-help">Las metas de completos por base son para el periodo filtrado en el panel lateral. La meta de cada agente es completos por día × días que gestionó en el periodo. Se guardan en este navegador y puedes cambiarlas cuando quieras; lo que dejes vacío no se muestra.</p>
+        </details>
         <div id="presWrap">
           <div class="pres-stage" id="presStage">
             <div class="pres-slide" id="presSlide"></div>
@@ -2183,9 +2217,11 @@ function applyActive(){
 /* =========================================================
    PRESENTAR INDICADORES: diapositivas en el navegador
    ========================================================= */
-var pres = { i: 0, n: 0, scope: 'TODO', chart: null };
-var PRES_SCOPE = { TODO: 'Consolidado', FRONT: 'Front sin remarcados', SCRAPING: 'Scraping sin remarcados', REMARCADOS: 'Base de remarcación' };
-function presList(){ return pres.scope === 'TODO' ? state.pool : state.pool.filter(function(r){ return inView(r, pres.scope); }); }
+var pres = { i: 0, n: 0, chart: null };
+var PM = {};
+try { PM = JSON.parse(localStorage.getItem('habi-pres-metas') || '{}') || {}; } catch (e){}
+function pm(k){ var v = parseFloat(String(PM[k] == null ? '' : PM[k]).replace(',', '.')); return isFinite(v) && v > 0 ? v : NaN; }
+function presList(){ return state.pool; }
 function presPeriodo(list){
   var a = state.filters.desde, b = state.filters.hasta, mn = Infinity, mx = -Infinity;
   list.forEach(function(r){ if (isFinite(r.t)){ if (r.t < mn) mn = r.t; if (r.t > mx) mx = r.t; } });
@@ -2193,89 +2229,136 @@ function presPeriodo(list){
   return isFinite(a) && isFinite(b) && a <= b ? 'Periodo ' + rangoTexto(a, b) : 'Sin fechas de gestión';
 }
 function pHead(title, sub){ return '<header class="ps-head"><h3 class="ps-title">' + esc(title) + '</h3>' + (sub ? '<p class="ps-sub">' + esc(sub) + '</p>' : '') + '</header>'; }
-function pTile(label, value, sub, color){
-  return '<div class="ps-tile"><span class="l">' + esc(label) + '</span><span class="v num"' + (color ? ' style="color:' + color + '"' : '') + '>' + value + '</span><span class="s">' + (sub || '') + '</span></div>';
+function pTile(label, value, sub, color, prog){
+  return '<div class="ps-tile"><span class="l">' + esc(label) + '</span><span class="v num"' + (color ? ' style="color:' + color + '"' : '') + '>' + value + '</span>' +
+    (prog ? '<span class="ps-prog"><span style="width:' + Math.min(100, Math.max(0, prog.pct * 100)) + '%;background:' + prog.color + '"></span></span>' : '') +
+    '<span class="s"' + (prog ? ' style="color:' + prog.color + ';font-weight:700"' : '') + '>' + (sub || '') + '</span></div>';
 }
 function presFont(){ var w = $('#presStage').clientWidth || 900; return Math.max(10, Math.round(w / 78)); }
 function efeOf(a){ return a.gest ? a.comp / a.gest : 0; }
+function cumColor(p){ return p >= 1 ? C.green : p >= 0.85 ? C.yellow : C.red; }
+/* Color de efectividad: frente a la meta si existe; si no, el semáforo general */
+function efeColor(e, metaPct){ if (!isFinite(metaPct)) return colorByThreshold(e); var d = e * 100 - metaPct; return d >= 0 ? C.green : d >= -10 ? C.yellow : C.red; }
+function compTile(v, m, extra){
+  if (!isFinite(m)) return pTile('Completos', fmtN.format(v), extra || 'Sin meta definida');
+  var p = v / m, c = cumColor(p);
+  return pTile('Completos', fmtN.format(v), fmtPct(p) + ' de la meta de ' + fmtN.format(m) + (v >= m ? '' : '. Faltan ' + fmtN.format(m - v)), '', { pct: p, color: c });
+}
+function efeTile(e, m){
+  if (!isFinite(m)) return pTile('Efectividad', fmtPct(e), 'Completos ÷ gestionados', colorByThreshold(e));
+  var d = e * 100 - m, c = efeColor(e, m);
+  return pTile('Efectividad', fmtPct(e), 'Meta ' + String(m).replace('.', ',') + '%. ' + (d >= 0 ? '+' : '') + d.toFixed(1).replace('.', ',') + ' pp', c, { pct: e * 100 / m, color: c });
+}
+
+/* Diapositiva de una base: indicadores a la izquierda y completos por día a la derecha */
+function baseSlide(title, sub, color, L, kind){
+  var B = aggregate(L);
+  if (!B.total) return null;
+  var e = B.gest ? B.comp / B.gest : 0, mC = pm(kind + 'Comp'), mE = pm(kind + 'Efe');
+  var tiles = [compTile(B.comp, mC), efeTile(e, mE)];
+  var days = {}, link = 0, recMes = 0, gestMes = 0, gestOtros = 0, compOtros = 0, hasAsign = false;
+  L.forEach(function(r){
+    if (r.tipo !== 'Sin fecha de asignación') hasAsign = true;
+    if (r.tipo === 'Mismo mes'){ recMes++; if (r.gest) gestMes++; }
+    if (r.tipo === 'Mes anterior' && r.gest){ gestOtros++; if (r.comp) compOtros++; }
+    if (r.gest && /link no funciona/.test(norm(r.res))) link++;
+    if (isFinite(r.t)){ var d = days[r.t] || (days[r.t] = { comp: 0, link: 0, gest: 0 }); if (r.gest) d.gest++; if (r.comp) d.comp++; if (r.gest && /link no funciona/.test(norm(r.res))) d.link++; }
+  });
+  if (kind === 'sc'){
+    tiles.push(pTile('Link no funciona', fmtN.format(link), B.gest ? fmtPct(link / B.gest) + ' de lo gestionado' : '', C.orange));
+    tiles.push(pTile('Gestionados', fmtN.format(B.gest), 'en el periodo'));
+    tiles.push(pTile('Base recibida del mismo mes', hasAsign ? fmtN.format(recMes) : '–', hasAsign ? fmtN.format(gestMes) + ' gestionados de esa base' : 'La base no tiene fecha de asignación'));
+    tiles.push(pTile('Gestionado de otros meses', hasAsign ? fmtN.format(gestOtros) : '–', hasAsign ? fmtN.format(compOtros) + ' completos de meses anteriores' : 'La base no tiene fecha de asignación'));
+  } else {
+    tiles.push(pTile('Gestionados', fmtN.format(B.gest), fmtN.format(B.total) + ' registros en la base'));
+    tiles.push(pTile('Contactabilidad', fmtPct(B.gest ? B.contact / B.gest : 0), 'Contactos ÷ gestionados', colorByThreshold(B.gest ? B.contact / B.gest : 0)));
+    tiles.push(pTile('No contesta', fmtN.format(B.nc), B.gest ? fmtPct(B.nc / B.gest) + ' de lo gestionado' : ''));
+    tiles.push(kind === 'fr' && hasAsign ? pTile('Base recibida del mismo mes', fmtN.format(recMes), fmtN.format(gestOtros) + ' gestionados de otros meses') : pTile('Días con gestión', fmtN.format(Object.keys(days).length), Object.keys(days).length ? fmtN.format(Math.round(B.gest / Object.keys(days).length)) + ' gestionados por día' : ''));
+  }
+  var dk = Object.keys(days).map(Number).sort(function(a, b){ return a - b; });
+  return { name: title, html: pHead(title, sub) +
+    '<div class="ps-split base"><div class="ps-grid g2 r3">' + tiles.join('') + '</div><div class="ps-chart"><canvas id="presCanvas"></canvas></div></div>',
+    chart: dk.length ? function(fs){
+      var ds = [{ type: 'bar', label: 'Completos', data: dk.map(function(d){ return days[d].comp; }), backgroundColor: color, borderRadius: 4, maxBarThickness: 40, order: 2 }];
+      if (kind === 'sc') ds.push({ type: 'bar', label: 'Link no funciona', data: dk.map(function(d){ return days[d].link; }), backgroundColor: '#9AA3AF', borderRadius: 4, maxBarThickness: 40, order: 3 });
+      if (isFinite(mC)){ var md = +(mC / dk.length).toFixed(1); ds.push({ type: 'line', label: 'Meta diaria (' + String(md).replace('.', ',') + ')', data: dk.map(function(){ return md; }), borderColor: themeColors().ink, borderDash: [6, 4], borderWidth: Math.max(1.5, fs / 8), pointRadius: 0, order: 1 }); }
+      return { type: 'bar', labels: dk.map(fmtDayShort), datasets: ds, options: { interaction: { mode: 'index', intersect: false } } };
+    } : null };
+}
 
 function presSlides(){
   var list = presList(), A = aggregate(list), per = presPeriodo(list), S = [];
   var efe = A.gest ? A.comp / A.gest : NaN, con = A.gest ? A.contact / A.gest : NaN;
   var ags = Object.keys(A.byAg).map(function(k){ return A.byAg[k]; }).filter(function(a){ return a.gest > 0; });
   var inact = actKeys.filter(function(k){ return ACT.off[k]; }).length;
+  var LF = list.filter(function(r){ return inView(r, 'FRONT'); }), LS = list.filter(function(r){ return inView(r, 'SCRAPING'); }), LR = list.filter(function(r){ return r.tipo === 'Remarcado'; });
+  var CF = aggregate(LF).comp, CS = aggregate(LS).comp, CR = aggregate(LR).comp;
 
   /* Portada */
   S.push({ name: 'Portada', html: '<div class="ps-cover"><div class="ps-mark" aria-hidden="true">A</div><p class="ps-sub">Asertis BPS para Habi</p>' +
-    '<h2 class="ps-hero">Indicadores operativos</h2><p class="ps-lead">' + esc(PRES_SCOPE[pres.scope]) + '. ' + esc(per) + '.</p>' +
+    '<h2 class="ps-hero">Indicadores operativos</h2><p class="ps-lead">' + esc(per) + '.</p>' +
     '<p class="ps-meta">' + fmtN.format(A.gest) + ' registros gestionados por ' + fmtN.format(ags.length) + (ags.length === 1 ? ' agente' : ' agentes') +
     (ACT.only && inact ? ' activos (' + fmtN.format(inact) + ' inactivos excluidos)' : '') + '.</p></div>' });
 
-  if (!A.gest){
-    S.push({ name: 'Sin datos', html: pHead('Sin registros gestionados', per) + '<div class="ps-empty">No hay registros con tipificación para estos filtros y agentes activos.</div>' });
+  if (!A.total){
+    S.push({ name: 'Sin datos', html: pHead('Sin registros', per) + '<div class="ps-empty">No hay registros para estos filtros y agentes activos.</div>' });
   } else {
-    /* Resumen */
+    /* Resumen consolidado */
+    var metas = [pm('frComp'), pm('scComp'), pm('remComp')], mTot = 0, anyM = false;
+    metas.forEach(function(m){ if (isFinite(m)){ mTot += m; anyM = true; } });
     S.push({ name: 'Resumen', html: pHead('Resumen de la operación', per) +
       '<div class="ps-grid g4">' +
-        pTile('Gestionados', fmtN.format(A.gest), fmtN.format(A.total) + ' registros en la base') +
-        pTile('Completos', fmtN.format(A.comp), A.contact ? fmtPct(A.comp / A.contact) + ' de los contactos' : '') +
+        pTile('Gestionados', fmtN.format(A.gest), fmtN.format(A.total) + ' registros en las bases') +
+        compTile(A.comp, anyM ? mTot : NaN, A.contact ? fmtPct(A.comp / A.contact) + ' de los contactos' : '') +
         pTile('Efectividad', fmtPct(efe), semaforo(efe)[1] + '. Completos ÷ gestionados', colorByThreshold(efe)) +
         pTile('Contactabilidad', fmtPct(con), semaforo(con)[1] + '. Contactos ÷ gestionados', colorByThreshold(con)) +
-      '</div><p class="ps-note">No contesta: <b>' + fmtN.format(A.nc) + '</b> registros, ' + fmtPct(A.nc / A.gest) + ' de lo gestionado. Semáforo: verde desde 70 %, amarillo de 50 % a 69 %, rojo por debajo de 50 %.</p>' });
+      '</div><p class="ps-note">Completos por base: Front <b>' + fmtN.format(CF) + '</b>, Scraping <b>' + fmtN.format(CS) + '</b>, Remarcados <b>' + fmtN.format(CR) + '</b>.' +
+      (anyM ? ' La meta consolidada suma las metas de completos escritas para cada base.' : '') + '</p>' });
 
-    /* Por base */
-    if (pres.scope === 'TODO'){
-      var groups = [['Front', 'FRONT', C.orange], ['Scraping', 'SCRAPING', C.green], ['Remarcados', 'REMARCADOS', '#B5541A']].map(function(g){
-        return [g, aggregate(list.filter(function(r){ return inView(r, g[1]); }))];
-      }).filter(function(x){ return x[1].gest > 0; });
-      if (groups.length > 1){
-        S.push({ name: 'Por base', html: pHead('Resultados por base', 'Front y Scraping sin remarcados; la base de remarcación va aparte') +
-          '<div class="ps-grid g' + groups.length + '">' + groups.map(function(x){
-            var g = x[0], B = x[1], e = B.comp / B.gest, c = B.contact / B.gest;
-            return '<div class="ps-col" style="--c:' + g[2] + '"><span class="ps-col-name">' + g[0] + '</span><span class="v num">' + fmtN.format(B.comp) + '</span>' +
-              '<span class="s">completos de ' + fmtN.format(B.gest) + ' gestionados</span><dl>' +
-              '<dt>Efectividad</dt><dd class="num" style="color:' + colorByThreshold(e) + '">' + fmtPct(e) + '</dd>' +
-              '<dt>Contactabilidad</dt><dd class="num">' + fmtPct(c) + '</dd>' +
-              '<dt>No contesta</dt><dd class="num">' + fmtN.format(B.nc) + '</dd></dl></div>';
-          }).join('') + '</div>' });
-      }
+    /* Front, Scraping y Remarcados */
+    [baseSlide('Front', 'Sin base de remarcación. ' + per, C.orange, LF, 'fr'),
+     baseSlide('Scraping', 'Sin base de remarcación. ' + per, C.green, LS, 'sc'),
+     baseSlide('Remarcados', 'Base de remarcación de Front y Scraping. ' + per, '#B5541A', LR, 'rem')].forEach(function(x){ if (x) S.push(x); });
+
+    /* Agentes: tabla con meta y cumplimiento, en páginas de 10 */
+    var mD = pm('agDia'), mAE = pm('agEfe'), dset = {};
+    list.forEach(function(r){ if (r.gest && isFinite(r.t)){ (dset[r.ag] || (dset[r.ag] = {}))[r.t] = 1; } });
+    var rows = ags.map(function(a){
+      var dias = dset[a.agente] ? Object.keys(dset[a.agente]).length : 0, meta = isFinite(mD) ? mD * dias : NaN;
+      var fr = 0, sc = 0;
+      list.forEach(function(r){ if (r.ag === a.agente && r.comp){ if (r.src === 'FRONT') fr++; else sc++; } });
+      return { a: a, dias: dias, meta: meta, cum: isFinite(meta) && meta ? a.comp / meta : NaN, fr: fr, sc: sc };
+    }).sort(function(x, y){ return isFinite(mD) ? (y.cum - x.cum) || (y.a.comp - x.a.comp) : y.a.comp - x.a.comp; });
+    var per10 = 9, pages = Math.ceil(rows.length / per10);
+    for (var pg = 0; pg < pages; pg++){
+      var slice = rows.slice(pg * per10, pg * per10 + per10);
+      S.push({ name: 'Agentes' + (pages > 1 ? ' ' + (pg + 1) : ''), html:
+        pHead('Resultados por agente' + (pages > 1 ? ' (' + (pg + 1) + ' de ' + pages + ')' : ''),
+          (isFinite(mD) ? 'Meta de ' + String(mD).replace('.', ',') + ' completos por día gestionado' : 'Escribe la meta de completos por día en "Metas para la presentación" para ver el cumplimiento') +
+          (isFinite(mAE) ? '. Meta de efectividad ' + String(mAE).replace('.', ',') + '%' : '') + '. Ordenado por ' + (isFinite(mD) ? 'cumplimiento' : 'completos') + '.') +
+        '<div style="flex:1;min-height:0;overflow:hidden"><table class="ps-table"><thead><tr><th></th><th>Agente</th><th class="r">Días</th><th class="r">Gestionados</th><th class="r">Front</th><th class="r">Scraping</th><th class="r">Completos</th>' +
+        (isFinite(mD) ? '<th class="r">Meta</th><th class="r">Cumplimiento</th>' : '') + '<th class="r">Efectividad</th></tr></thead><tbody>' +
+        slice.map(function(x, i){
+          var e = efeOf(x.a);
+          return '<tr><td class="rk num">' + (pg * per10 + i + 1) + '</td><td>' + esc(x.a.agente) + '</td><td class="r num">' + fmtN.format(x.dias) + '</td><td class="r num">' + fmtN.format(x.a.gest) +
+            '</td><td class="r num">' + fmtN.format(x.fr) + '</td><td class="r num">' + fmtN.format(x.sc) + '</td><td class="r num"><b>' + fmtN.format(x.a.comp) + '</b></td>' +
+            (isFinite(mD) ? '<td class="r num">' + fmtN.format(Math.round(x.meta)) + '</td><td class="r num"><span class="ps-pill" style="background:' + cumColor(x.cum) + '">' + fmtPct(x.cum) + '</span></td>' : '') +
+            '<td class="r num"><span class="pct"><span class="dot" style="background:' + efeColor(e, mAE) + '"></span>' + fmtPct(e) + '</span></td></tr>';
+        }).join('') + '</tbody></table></div>' });
     }
 
-    /* Completos por día */
-    var days = Object.keys(A.byDay).map(Number).sort(function(a, b){ return a - b; });
-    if (days.length > 1){
-      var dTot = function(d){ return A.byDay[d].FRONT + A.byDay[d].SCRAPING; };
-      var best = days.slice().sort(function(a, b){ return dTot(b) - dTot(a); })[0];
-      S.push({ name: 'Por día', html: pHead('Completos por día', 'El mejor día fue el ' + dayLabel(best) + ' con ' + fmtN.format(dTot(best)) + ' completos') +
-        '<div class="ps-chart"><canvas id="presCanvas"></canvas></div>', chart: function(fs){
-          var ds = [];
-          [['Front', 'FRONT', C.orange], ['Scraping', 'SCRAPING', C.green]].forEach(function(g){
-            if (days.some(function(d){ return A.byDay[d][g[1]]; })) ds.push({ label: g[0], data: days.map(function(d){ return A.byDay[d][g[1]]; }), borderColor: g[2], backgroundColor: g[2], tension: .3, pointRadius: fs / 3, borderWidth: fs / 4 });
-          });
-          return { type: 'line', labels: days.map(fmtDayShort), datasets: ds, options: { interaction: { mode: 'index', intersect: false } } };
-        } });
-    }
-
-    /* Efectividad por agente */
+    /* Efectividad por agente frente a la meta */
     var elig = ags.filter(function(a){ return a.gest >= 20; }); if (!elig.length) elig = ags;
-    var byE = elig.slice().sort(function(a, b){ return efeOf(b) - efeOf(a); }).slice(0, 20);
-    S.push({ name: 'Efectividad', html: pHead('Efectividad por agente', 'Completos ÷ gestionados' + (elig.length < ags.length ? ', agentes con 20 o más gestiones' : '')) +
-      '<div class="ps-chart"><canvas id="presCanvas"></canvas></div>', chart: function(){
+    var byE = elig.slice().sort(function(a, b){ return efeOf(b) - efeOf(a); }).slice(0, 25);
+    if (byE.length) S.push({ name: 'Efectividad agentes', html: pHead('Efectividad por agente', 'Completos ÷ gestionados' + (elig.length < ags.length ? ', agentes con 20 o más gestiones' : '') + (isFinite(mAE) ? '. La línea marca la meta de ' + String(mAE).replace('.', ',') + '%' : '')) +
+      '<div class="ps-chart"><canvas id="presCanvas"></canvas></div>', chart: function(fs){
         var v = byE.map(efeOf);
-        return { type: 'bar', labels: byE.map(function(a){ return shortName(a.agente); }), datasets: [{ label: 'Efectividad', data: v, backgroundColor: v.map(colorByThreshold), borderRadius: 4, maxBarThickness: 46 }],
-          options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(c){ return ' ' + fmtPct(c.parsed.y); } } } },
+        var ds = [{ type: 'bar', label: 'Efectividad', data: v, backgroundColor: v.map(function(e){ return efeColor(e, mAE); }), borderRadius: 4, maxBarThickness: 46, order: 2 }];
+        if (isFinite(mAE)) ds.push({ type: 'line', label: 'Meta', data: v.map(function(){ return mAE / 100; }), borderColor: themeColors().ink, borderDash: [6, 4], borderWidth: Math.max(1.5, fs / 8), pointRadius: 0, order: 1 });
+        return { type: 'bar', labels: byE.map(function(a){ return shortName(a.agente); }), datasets: ds,
+          options: { plugins: { legend: { display: isFinite(mAE) }, tooltip: { callbacks: { label: function(c){ return ' ' + c.dataset.label + ': ' + fmtPct(c.parsed.y); } } } },
             scales: { y: { max: 1, ticks: { callback: function(x){ return Math.round(x * 100) + '%'; } } }, x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 30 } } } } };
       } });
-
-    /* Ranking */
-    var rk = ags.slice().sort(function(a, b){ return b.comp - a.comp || efeOf(b) - efeOf(a); }).slice(0, 10);
-    S.push({ name: 'Ranking', html: pHead('Ranking de agentes por completos', ags.length > 10 ? 'Los 10 agentes con más completos de ' + ags.length : fmtN.format(ags.length) + ' agentes') +
-      '<div style="flex:1;min-height:0;overflow:hidden"><table class="ps-table"><thead><tr><th></th><th>Agente</th><th class="r">Gestionados</th><th class="r">Completos</th><th class="r">Efectividad</th><th class="r">Contactabilidad</th></tr></thead><tbody>' +
-      rk.map(function(a, i){
-        var e = efeOf(a), c = a.gest ? a.contact / a.gest : 0;
-        return '<tr><td class="rk num">' + (i + 1) + '</td><td>' + esc(a.agente) + '</td><td class="r num">' + fmtN.format(a.gest) + '</td><td class="r num"><b>' + fmtN.format(a.comp) + '</b></td>' +
-          '<td class="r num"><span class="pct"><span class="dot" style="background:' + colorByThreshold(e) + '"></span>' + fmtPct(e) + '</span></td><td class="r num">' + fmtPct(c) + '</td></tr>';
-      }).join('') + '</tbody></table></div>' });
   }
 
   /* Calidad */
@@ -2304,15 +2387,22 @@ function presSlides(){
   /* Puntos a destacar */
   var pts = [];
   if (A.gest){
-    pts.push('La efectividad fue de <b>' + fmtPct(efe) + '</b> (' + semaforo(efe)[1].toLowerCase() + ') y la contactabilidad de <b>' + fmtPct(con) + '</b>.');
+    [['Front', CF, 'frComp'], ['Scraping', CS, 'scComp'], ['Remarcados', CR, 'remComp']].forEach(function(b){
+      var m = pm(b[2]); if (isFinite(m)) pts.push(b[0] + ': <b>' + fmtN.format(b[1]) + '</b> completos, <b>' + fmtPct(b[1] / m) + '</b> de la meta de ' + fmtN.format(m) + '.');
+    });
     var base = ags.filter(function(a){ return a.gest >= 20; }); if (!base.length) base = ags;
     var bE = base.slice().sort(function(a, b){ return efeOf(b) - efeOf(a); })[0];
     var bC = ags.slice().sort(function(a, b){ return b.comp - a.comp; })[0];
     pts.push('Mejor efectividad: <b>' + esc(bE.agente) + '</b> con ' + fmtPct(efeOf(bE)) + ' (' + fmtN.format(bE.comp) + ' completos).');
     if (bC !== bE) pts.push('Más completos: <b>' + esc(bC.agente) + '</b> con ' + fmtN.format(bC.comp) + '.');
-    var low = base.filter(function(a){ return efeOf(a) < 0.5; });
-    pts.push(low.length ? fmtN.format(low.length) + (low.length === 1 ? ' agente quedó' : ' agentes quedaron') + ' por debajo del 50 % de efectividad: ' +
-      low.slice(0, 6).map(function(a){ return esc(a.agente); }).join(', ') + (low.length > 6 ? ' y ' + (low.length - 6) + ' más' : '') + '.' : 'Ningún agente quedó por debajo del 50 % de efectividad.');
+    if (isFinite(pm('agDia')) && rows.length){
+      var ok = rows.filter(function(x){ return x.cum >= 1; }).length;
+      pts.push(fmtN.format(ok) + ' de ' + fmtN.format(rows.length) + ' agentes cumplen la meta de ' + String(pm('agDia')).replace('.', ',') + ' completos por día.');
+    }
+    var lim = isFinite(pm('agEfe')) ? pm('agEfe') / 100 : 0.5;
+    var low = base.filter(function(a){ return efeOf(a) < lim; });
+    pts.push(low.length ? fmtN.format(low.length) + (low.length === 1 ? ' agente quedó' : ' agentes quedaron') + ' por debajo de ' + Math.round(lim * 100) + ' % de efectividad: ' +
+      low.slice(0, 6).map(function(a){ return esc(a.agente); }).join(', ') + (low.length > 6 ? ' y ' + (low.length - 6) + ' más' : '') + '.' : 'Ningún agente quedó por debajo de ' + Math.round(lim * 100) + ' % de efectividad.');
   }
   if (QA && QA.n){
     var bajo = Object.keys(QA.byAg).filter(function(k){ return QA.byAg[k].sum / QA.byAg[k].n < meta; }).length;
@@ -2333,7 +2423,7 @@ function renderPresentation(){
   $('#presSlide').innerHTML = sl.html;
   $('#presPage').textContent = (pres.i + 1) + ' / ' + slides.length;
   $('#presCounter').textContent = (pres.i + 1) + ' de ' + slides.length;
-  $('#presFootL').textContent = 'Tablero operativo Habi, ' + PRES_SCOPE[pres.scope];
+  $('#presFootL').textContent = 'Tablero operativo Habi. ' + presPeriodo(presList());
   $('#presDots').innerHTML = slides.map(function(s, i){ return '<button type="button" class="pres-dot" data-i="' + i + '" aria-current="' + (i === pres.i) + '">' + esc(s.name) + '</button>'; }).join('');
   $('#presPrev').disabled = $('#presArrPrev').disabled = pres.i === 0;
   $('#presNext').disabled = $('#presArrNext').disabled = pres.i === slides.length - 1;
@@ -2619,10 +2709,14 @@ function bind(){
     toast('Todos los agentes quedaron inactivos. Marca los que siguen en la operación.', 'info');
   });
   /* Presentar indicadores */
-  $$('#presScope button').forEach(function(b){ b.addEventListener('click', function(){
-    $$('#presScope button').forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
-    pres.scope = b.dataset.v; pres.i = 0; renderPresentation();
-  }); });
+  $$('[data-pm]').forEach(function(inp){
+    if (PM[inp.dataset.pm] != null) inp.value = PM[inp.dataset.pm];
+    inp.addEventListener('input', debounce(function(){
+      PM[inp.dataset.pm] = inp.value;
+      try { localStorage.setItem('habi-pres-metas', JSON.stringify(PM)); } catch (e){}
+      if (state.view === 'PRESENT') renderPresentation();
+    }, 300));
+  });
   $('#presPrev').addEventListener('click', function(){ presGo(-1); });
   $('#presNext').addEventListener('click', function(){ presGo(1); });
   $('#presArrPrev').addEventListener('click', function(){ presGo(-1); });
